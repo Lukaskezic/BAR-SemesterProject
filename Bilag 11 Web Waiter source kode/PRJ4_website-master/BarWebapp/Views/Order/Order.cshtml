@@ -1,0 +1,83 @@
+﻿@using BarDatabase.Models
+@model BarWebapp.Models.OrderViewModel
+
+@{
+    ViewData["Title"] = "Order";
+
+
+}
+
+
+
+<!---Don't show sold out products/Grey out products sold out and change button text?-->
+
+<div class="text-center">
+    <!-- Wrapper -->
+    <div id="wrapper">
+        <!-- Navigation bar -->
+        <div id="nav">
+
+        </div>
+        <!-- Select Box for categories -->
+        <select id="category" onchange="displayCategory(this)">
+            <option value="">Select Category</option>
+            @foreach (var cat in Model.categories)
+            {
+                <option value="@cat.Type">@cat.Type</option>
+            }
+        </select>
+
+
+        <!-- Content -->
+        <div id="content">
+            <h2 style="text-align:center">Products</h2>
+
+
+            <div class="row" id="productList">
+                <!-- Generation of all products dynamically -->
+                @foreach (var item in Model.listOfProducts)
+                {
+                    string categoryTypeList = "";
+
+                    foreach (var itemCategory in item.Categories)
+                    {
+                        categoryTypeList += itemCategory.Type + " ";
+                    }
+                    
+                    <div class="column @categoryTypeList" >
+                        <div class="card">
+                            <div class="imgPreview">
+                                <img src="@item.ImgUrl" alt="@categoryTypeList">
+                            </div>
+                            <div class="container">
+                                <p>@item.Name</p>
+                                <p>Price: @item.Price</p>
+                                <p>Amount in stock: @item.AmountInStock</p>
+                                <div>
+                                    @if (item.AmountInStock > 0)
+                                    {
+                                        <div>
+                                            <button class="button" onclick='AddToCart(@item.ProductId, "@item.Name", "@item.ImgUrl", @item.Price, @item.AmountInStock)'>Add to cart</button>
+                                            <input type="number" oninput="checkValue(this,@item.AmountInStock)" id="amountToAdd @item.ProductId" min="1" max="@item.AmountInStock" value="1"/>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p>Products coming soon</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+                @{
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/order.js"></script>

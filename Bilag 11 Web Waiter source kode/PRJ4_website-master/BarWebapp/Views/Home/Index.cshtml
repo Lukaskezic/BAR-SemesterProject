@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+    <div class="text-center">
+
+        <h1 class="display-4">Welcome to B.A.R. Web Waiter!</h1>
+
+        <h2>You are sitting at table:  <h2 id="tableID"></h2>  </h2>
+
+        <a asp-area="" asp-controller="Order" asp-action="Order"><button class="toOrderButton">Order</button></a>
+
+    </div>
+
+<script>
+    // Funktion til checke URL for tableID parameter i URL
+    function setTableID() {
+        var tableID = new URLSearchParams(window.location.search).get("table"); 
+        if (tableID !== null) {
+            console.log(tableID);
+            localStorage.setItem("tableID", tableID);
+            document.getElementById("tableID").innerText = tableID;
+            return;
+        }
+        document.getElementById("tableID").innerText = localStorage.getItem("tableID");
+    }
+    setTableID();
+</script>

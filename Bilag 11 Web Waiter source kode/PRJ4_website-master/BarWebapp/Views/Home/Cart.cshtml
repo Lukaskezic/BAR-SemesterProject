@@ -1,0 +1,68 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Kurv";
+
+}
+
+<div id="cartWrapper" style="width:100%" hidden>
+        <table id="result">
+            <tr> <!-- Header  -->
+                <th colspan="2">Product</th>
+                <th>Amount</th>
+                <th>Price</th>
+                <th>Remove product</th>
+            </tr>
+        </table>
+    <br />
+    Total price:
+    <p id="totalPrice"> </p>
+
+    <button id="confirmBtn" onclick="ConfirmOrder()">Confirm Order</button>
+    <br />
+</div>
+<div id="cartEmpty">
+    <h1 style="text-align:center">The cart is empty ¯\_(ツ)_/¯</h1>
+</div>
+
+
+<script src="~/js/kurv.js"></script>
+
+<script>
+    // Funktion der kaldes fra ConfirmOrder knap
+    function ConfirmOrder() {
+        var URL = "@Url.Action("ConfirmOrder")/" + localStorage.getItem("tableID");
+        var products = JSON.parse(localStorage.getItem('Products')) || []; // Enten få Product array i localStorage eller lav ny Array
+        if (products.length === 0) {
+            return;
+        }
+        var orderedProducts = [];
+        products.forEach(product => {
+            orderedProducts.push({ id: product.ProductID, amount: product.Amount });
+        });
+
+        localStorage.setItem('Order', JSON.stringify(orderedProducts));
+        console.log(orderedProducts);
+
+        console.log(localStorage.getItem("Products"));
+        fetch(URL,
+            {
+                method: 'POST',
+                Headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: localStorage.getItem("Order")
+            }).then(response => {
+            if (response.status === 202) {
+                console.log("ConfirmOrder Accepted");
+                localStorage.removeItem("Order");
+                localStorage.removeItem("Products");
+                alert("Order successfully placed");
+                window.location.href = window.location.origin;
+            } else {
+                console.log("Error in confirm order");
+            }
+        });
+    }
+</script>
